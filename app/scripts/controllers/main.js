@@ -38,181 +38,149 @@ angular.module('artistsLinkApp')
 	// ministri			spotify:artist:6an9YCv0S0Mj3rsaD9Ahpz
 	// elthon john		spotify:artist:3PhoLpVuITZKcymswpck5b
 	// Madonna			spotify:artist:6tbjWDEIzxoDsBA1FuhfPW
+	// destruction		spotify:artist:5d6KI8frPEo3qGsIL8Sak2
 
     $scope.artistLeft = {
     	'id':'2ye2Wgw4gimLv2eAKyk1NB',
-    	'name':'Metallica',
+    	'label':'Metallica',
     	'level': 0
     }
 
     // $scope.artistLeft = {
     // 	'id':'1dfeR4HaWDbWqFHLkxsg1d',
-    // 	'name':'Queen',
-    // 	'level': 0
-    // }
-
-    // $scope.artistRight = {
-    // 	'id':'5imUS9dQyCbAjUEJJ9QyWC',
-    // 	'name':'Powerman 5000',
-    // 	'level': 0
-    // }
-
-    // $scope.artistLeft = {
-    // 	'id':'6tbjWDEIzxoDsBA1FuhfPW',
-    // 	'name':'Madonna',
+    // 	'label':'Queen',
     // 	'level': 0
     // }
 
     $scope.artistRight = {
-    	'id':'1dfeR4HaWDbWqFHLkxsg1d',
-    	'name':'Queen',
+    	'id':'5imUS9dQyCbAjUEJJ9QyWC',
+    	'label':'Powerman 5000',
     	'level': 0
     }
 
+    $scope.artistRight = {
+    	'id':'5d6KI8frPEo3qGsIL8Sak2',
+    	'label':'Destruction',
+    	'level': 0
+    }
+
+    // $scope.artistLeft = {
+    // 	'id':'6tbjWDEIzxoDsBA1FuhfPW',
+    // 	'label':'Madonna',
+    // 	'level': 0
+    // }
+
+    // $scope.artistRight = {
+    // 	'id':'1dfeR4HaWDbWqFHLkxsg1d',
+    // 	'label':'Queen',
+    // 	'level': 0
+    // }
+
     // $scope.artistRight = {
     // 	'id':'6o2PxnpsrQ352kwYlEwjvR',
-    // 	'name':'Area',
+    // 	'label':'Area',
     // 	'level': 0
     // }
 
     // $scope.artistRight = {
     // 	'id':'6an9YCv0S0Mj3rsaD9Ahpz',
-    // 	'name':'Ministri',
+    // 	'label':'Ministri',
     // 	'level': 0
     // }
 
     // $scope.artistRight = {
     // 	'id':'3PhoLpVuITZKcymswpck5b',
-    // 	'name':'Elthon John',
+    // 	'label':'Elthon John',
     // 	'level': 0
     // }
 
 	$scope.reset = function() {
-		$scope.related = {'left':[],'right':[]}
-	    $scope.related.left.push($scope.artistLeft)
-	    $scope.related.right.push($scope.artistRight)
-	    $scope.commonRelated = []
-	    $scope.toFetch = []
-
-	    $scope.toFetch.push($scope.artistLeft)
-	    $scope.toFetch.push($scope.artistRight)
-
+	    $scope.toFetch = [$scope.artistLeft,$scope.artistRight]
+	    // $scope.toFetch.push($scope.artistLeft)
+	    // $scope.toFetch.push($scope.artistRight)
 	    $scope.network = { 'nodes':[], 'edges': [] }
 	    $scope.network.nodes.push($scope.artistLeft)
 	    $scope.network.nodes.push($scope.artistRight)
-
-	    $scope.level = -1
+	    $scope.path;
+	    $scope._nodes = [];
 	}
+	$scope.reset()
 
-	$scope.drawChart = function(rel, com){
-		console.log('drawChart')
-	}
+	$scope.findPath = function() {
+		var cy;
+		cy = cytoscape({
+		  elements: [],
+		  style: [ // the stylesheet for the graph
+		    {
+		      selector: 'node',
+		      style: {
+		        'background-color': '#666',
+		        'label': 'data(id)'
+		      }
+		    },
 
+		    {
+		      selector: 'edge',
+		      style: {
+		        'width': 3,
+		        'line-color': '#ccc',
+		        'target-arrow-color': '#ccc',
+		        'target-arrow-shape': 'triangle'
+		      }
+		    }
+		  ],
 
-    $scope.compareRelated = function(){
-    	var inCommon = _.intersectionWith($scope.related.left, $scope.related.right, _.isEqual)
-    	inCommon.forEach(function(item){
-    		if(item.id == $scope.artistLeft.id || item.id == $scope.artistRight.id){
-    			var indexToCut = inCommon.indexOf(item);
-    			if (indexToCut > -1) {
-				    inCommon.splice(indexToCut, 1);
-				}
-    		}
-    	})
-    	if (inCommon.length > 0) {
-    		$scope.commonRelated.push(inCommon)
-    		console.log('>>>>> found related in common')
-    		var stringa = ''
-    		inCommon.forEach(function(art){
-    			stringa+=art.name + ' ('+art.level+')'
-    			stringa+=', '
-    		})
-    		console.log(stringa)		
-    		$scope.drawChart($scope.related, $scope.commonRelated)
+		  layout: {
+		    name: 'grid',
+		    rows: 1
+		  }
 
-    		$scope.reset()
-    	} else {
-    		console.log('go on')
-    		$scope.fetchRelated()	
-    	}
-    }
-
-    $scope.reset()
-    $scope.fetchRelated = function(){
-    	
-    	$scope.level++
-
-    	var artists = $scope.related['left'].filter(function(a){
-    		return a.level == $scope.level
-    	})
-
-    	artists.forEach(function(a,index){
-
-    		$scope.related['left'].forEach(function(rel){
-    			if(rel.id == a.id) {
-    				console.log('cè già', a.name, rel.name)
-    				// rel.level =  
-
-    			}
-    		})
-
-			var url = 'https://api.spotify.com/v1/artists/{id}/related-artists'
-	    	url = url.replace('{id}',a.id)
-
-	    	setTimeout(function() {
-			    console.log('call with delay')
-
-				apiService.getRelated(url,{cache: true}).then(
-					function(data){
-						data.artists.forEach(function(aa){
-							aa.level = $scope.level+1
-							$scope.related['left'].push(aa)
-						})
-						if (index+1 == artists.length) {
-
-							var artistsRight = $scope.related['right'].filter(function(b){
-								return b.level == $scope.level
-							})
-
-							artistsRight.forEach(function(b,indexB){
-								var urlB = 'https://api.spotify.com/v1/artists/{id}/related-artists'
-								urlB = urlB.replace('{id}',b.id)
-								
-								setTimeout(function() {
-								    console.log('call with delay2')
-								    apiService.getRelated(urlB,{cache: true}).then(
-										function(data){
-											data.artists.forEach(function(bb){
-												bb.level = $scope.level+1
-												$scope.related['right'].push(bb)
-											})
-											if (indexB+1 == artistsRight.length){
-												console.log($scope.related)
-												$scope.compareRelated()
-											}
-										},
-										function(error,data){
-											console.log(error,data)
-										}
-									);
-								}, indexB*50);
-								
-
-							})
-						}
-					},
-					function(error,data){
-						console.log(error,data)
-					}
-				);
-
-			}, index*50);
+		});
 
 
+
+		$scope.network.nodes.forEach(function(n){
+			// myGraph.add(n.id, {'label':n.label})
+			cy.add({
+			    group: "nodes",
+			    data: { id:n.id },
+			});
 		})
 
-    }
+		$scope.network.edges.forEach(function(e){
+			// myGraph.ensureEdge(e.source, e.target, {'label': e.id})
+			cy.add({
+			    group: "edges",
+			    data: { id: e.source+'-'+e.target, source: e.source, target: e.target },
+			});
+		})
 
+		// console.log('nodes', cy.elements('node'))
+		// console.log('edges', cy.elements('edge'))
+
+		var aStar = cy.elements().aStar({ root: '#'+$scope.artistLeft.id, goal: '#'+$scope.artistRight.id });
+
+		console.log(aStar.path.select())
+
+		var dijkstra = cy.elements().dijkstra('#'+$scope.artistLeft.id, function(){
+		  return this.data('weight');
+		});
+
+		var pathToJ = dijkstra.pathTo( cy.$('#'+$scope.artistRight.id) );
+		var distToJ = dijkstra.distanceTo( cy.$('#'+$scope.artistRight.id) );
+
+
+		// console.log(pathToJ,distToJ)
+
+		if (distToJ == 'Infinity') {
+			$scope.fetchRelated()
+		} else {
+			console.log(pathToJ,distToJ)
+		}
+
+
+	}
+    
     $scope.fetchRelated = function() {
     	console.log('to fetch',$scope.toFetch)
 
@@ -264,9 +232,10 @@ angular.module('artistsLinkApp')
 									}
 								})
 
-								console.log($scope.toFetch.length)
+								console.log('to fetch', $scope.toFetch.length)
 
-								console.log(sigma)
+								$scope.findPath();
+
 
 							}
 						}
@@ -277,25 +246,6 @@ angular.module('artistsLinkApp')
 				}
 			);
     	})
-    }
-
-    //not used
-    $scope.getRelated = function(artist,arrBox){
-    	var url = 'https://api.spotify.com/v1/artists/{id}/related-artists'
-    	url = url.replace('{id}',artist.id)
-
-    	apiService.getRelated(url).then(
-			function(data){
-
-				data.artists.forEach(function(a){
-					a.level = $scope.level
-					arrBox.push(a)
-				})
-			},
-			function(error){
-				console.log(error)
-			}
-		);
     }
 
 

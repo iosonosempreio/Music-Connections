@@ -1,0 +1,124 @@
+    $scope.compareRelated = function(){
+    	var inCommon = _.intersectionWith($scope.related.left, $scope.related.right, _.isEqual)
+    	inCommon.forEach(function(item){
+    		if(item.id == $scope.artistLeft.id || item.id == $scope.artistRight.id){
+    			var indexToCut = inCommon.indexOf(item);
+    			if (indexToCut > -1) {
+				    inCommon.splice(indexToCut, 1);
+				}
+    		}
+    	})
+    	if (inCommon.length > 0) {
+    		$scope.commonRelated.push(inCommon)
+    		console.log('>>>>> found related in common')
+    		var stringa = ''
+    		inCommon.forEach(function(art){
+    			stringa+=art.name + ' ('+art.level+')'
+    			stringa+=', '
+    		})
+    		console.log(stringa)		
+    		$scope.drawChart($scope.related, $scope.commonRelated)
+
+    		$scope.reset()
+    	} else {
+    		console.log('go on')
+    		$scope.fetchRelated()	
+    	}
+    }
+
+
+    $scope.fetchRelated = function(){
+        
+        $scope.level++
+
+        var artists = $scope.related['left'].filter(function(a){
+            return a.level == $scope.level
+        })
+
+        artists.forEach(function(a,index){
+
+            $scope.related['left'].forEach(function(rel){
+                if(rel.id == a.id) {
+                    console.log('cè già', a.name, rel.name)
+                    // rel.level =  
+
+                }
+            })
+
+            var url = 'https://api.spotify.com/v1/artists/{id}/related-artists'
+            url = url.replace('{id}',a.id)
+
+            setTimeout(function() {
+                console.log('call with delay')
+
+                apiService.getRelated(url,{cache: true}).then(
+                    function(data){
+                        data.artists.forEach(function(aa){
+                            aa.level = $scope.level+1
+                            $scope.related['left'].push(aa)
+                        })
+                        if (index+1 == artists.length) {
+
+                            var artistsRight = $scope.related['right'].filter(function(b){
+                                return b.level == $scope.level
+                            })
+
+                            artistsRight.forEach(function(b,indexB){
+                                var urlB = 'https://api.spotify.com/v1/artists/{id}/related-artists'
+                                urlB = urlB.replace('{id}',b.id)
+                                
+                                setTimeout(function() {
+                                    console.log('call with delay2')
+                                    apiService.getRelated(urlB,{cache: true}).then(
+                                        function(data){
+                                            data.artists.forEach(function(bb){
+                                                bb.level = $scope.level+1
+                                                $scope.related['right'].push(bb)
+                                            })
+                                            if (indexB+1 == artistsRight.length){
+                                                console.log($scope.related)
+                                                $scope.compareRelated()
+                                            }
+                                        },
+                                        function(error,data){
+                                            console.log(error,data)
+                                        }
+                                    );
+                                }, indexB*50);
+                                
+
+                            })
+                        }
+                    },
+                    function(error,data){
+                        console.log(error,data)
+                    }
+                );
+
+            }, index*50);
+
+
+        })
+
+    }
+
+
+
+        //not used
+    $scope.getRelated = function(artist,arrBox){
+        var url = 'https://api.spotify.com/v1/artists/{id}/related-artists'
+        url = url.replace('{id}',artist.id)
+
+        apiService.getRelated(url).then(
+            function(data){
+
+                data.artists.forEach(function(a){
+                    a.level = $scope.level
+                    arrBox.push(a)
+                })
+            },
+            function(error){
+                console.log(error)
+            }
+        );
+    }
