@@ -13,7 +13,8 @@
     "lodash": "^4.16.4",
     "sigma": "^1.1.0",
     "graph.js": "^1.20.12",
-    "cytoscape": "^2.7.10"
+    "cytoscape": "^2.7.10",
+    "d3": "^4.3.0"
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"

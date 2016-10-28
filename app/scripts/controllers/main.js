@@ -70,11 +70,11 @@ angular.module('artistsLinkApp')
     // 	'level': 0
     // }
 
-    // $scope.artistRight = {
-    // 	'id':'1dfeR4HaWDbWqFHLkxsg1d',
-    // 	'label':'Queen',
-    // 	'level': 0
-    // }
+    $scope.artistRight = {
+    	'id':'1dfeR4HaWDbWqFHLkxsg1d',
+    	'label':'Queen',
+    	'level': 0
+    }
 
     // $scope.artistRight = {
     // 	'id':'6o2PxnpsrQ352kwYlEwjvR',
@@ -98,7 +98,7 @@ angular.module('artistsLinkApp')
 	    $scope.toFetch = [$scope.artistLeft,$scope.artistRight]
 	    // $scope.toFetch.push($scope.artistLeft)
 	    // $scope.toFetch.push($scope.artistRight)
-	    $scope.network = { 'nodes':[], 'edges': [] }
+	    $scope.network = { 'nodes':[], 'links': [] }
 	    $scope.network.nodes.push($scope.artistLeft)
 	    $scope.network.nodes.push($scope.artistRight)
 	    $scope.path;
@@ -108,36 +108,7 @@ angular.module('artistsLinkApp')
 
 	$scope.findPath = function() {
 		var cy;
-		cy = cytoscape({
-		  elements: [],
-		  style: [ // the stylesheet for the graph
-		    {
-		      selector: 'node',
-		      style: {
-		        'background-color': '#666',
-		        'label': 'data(id)'
-		      }
-		    },
-
-		    {
-		      selector: 'edge',
-		      style: {
-		        'width': 3,
-		        'line-color': '#ccc',
-		        'target-arrow-color': '#ccc',
-		        'target-arrow-shape': 'triangle'
-		      }
-		    }
-		  ],
-
-		  layout: {
-		    name: 'grid',
-		    rows: 1
-		  }
-
-		});
-
-
+		cy = cytoscape();
 
 		$scope.network.nodes.forEach(function(n){
 			// myGraph.add(n.id, {'label':n.label})
@@ -147,7 +118,7 @@ angular.module('artistsLinkApp')
 			});
 		})
 
-		$scope.network.edges.forEach(function(e){
+		$scope.network.links.forEach(function(e){
 			// myGraph.ensureEdge(e.source, e.target, {'label': e.id})
 			cy.add({
 			    group: "edges",
@@ -160,29 +131,40 @@ angular.module('artistsLinkApp')
 
 		var aStar = cy.elements().aStar({ root: '#'+$scope.artistLeft.id, goal: '#'+$scope.artistRight.id });
 
-		console.log(aStar.path.select())
+		//Define the options var with your preferences
+		    var options = {
+		      root : '#'+$scope.artistLeft.id,
+		      weight : function (){
+		        return this.data('weight');
+		      },
+		      directed : false //this is not necessary
+		    }
+		//And execute he algorithm with these options
+		// elements.dijkstra(options);
 
-		var dijkstra = cy.elements().dijkstra('#'+$scope.artistLeft.id, function(){
-		  return this.data('weight');
-		});
-
-		var pathToJ = dijkstra.pathTo( cy.$('#'+$scope.artistRight.id) );
-		var distToJ = dijkstra.distanceTo( cy.$('#'+$scope.artistRight.id) );
 
 
-		// console.log(pathToJ,distToJ)
+		var dijkstra = cy.elements().dijkstra(options);
 
-		if (distToJ == 'Infinity') {
-			$scope.fetchRelated()
+		var path = dijkstra.pathTo( cy.$('#'+$scope.artistRight.id) );
+		var dist = dijkstra.distanceTo( cy.$('#'+$scope.artistRight.id) );
+
+
+		// console.log('dist',dist)
+		console.log('path',path['length'])
+
+		if (dist == 'Infinity' || path['length'] < 1) {
+			// $scope.fetchRelated()
+			console.log('NO path', path,dist)
 		} else {
-			console.log(pathToJ,distToJ)
+			console.log(path,dist)
 		}
 
 
 	}
     
     $scope.fetchRelated = function() {
-    	console.log('to fetch',$scope.toFetch)
+    	console.log('to fetch',$scope.toFetch.length)
 
     	var discoveredArtists = []
 
@@ -220,8 +202,8 @@ angular.module('artistsLinkApp')
 								console.log('fetched all', index+1, discoveredArtists.length)
 								$scope.network.nodes = _.unionWith($scope.network.nodes, newNodes, _.isEqual);
 								console.log('nodes',newNodes.length,$scope.network.nodes.length)
-								$scope.network.edges = _.unionWith($scope.network.edges, newEdges, _.isEqual)
-								console.log('edges',newEdges.length,$scope.network.edges.length)
+								$scope.network.links = _.unionWith($scope.network.links, newEdges, _.isEqual)
+								console.log('edges',newEdges.length,$scope.network.links.length)
 								console.log('discoveredArtists',discoveredArtists.length)
 
 								$scope.toFetch = _.differenceWith(discoveredArtists, $scope.network.edges, function(arrVal,othVal){
@@ -234,8 +216,7 @@ angular.module('artistsLinkApp')
 
 								console.log('to fetch', $scope.toFetch.length)
 
-								$scope.findPath();
-
+								// $scope.findPath();
 
 							}
 						}
