@@ -16,8 +16,8 @@ angular.module('artistsLinkApp')
          var deferred = $q.defer();
          $http.get(url).success(function(data){
            deferred.resolve(data);
-         }).error(function(){
-           deferred.reject("An error occured while fetching file");
+         }).error(function(error){
+           deferred.reject("An error occured while fetching file",error);
          });
 
          return deferred.promise;
