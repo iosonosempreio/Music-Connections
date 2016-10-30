@@ -12,19 +12,33 @@ angular.module('artistsLinkApp')
       restrict: 'E',
       templateUrl: './views/artists-network.html',
       link: function postLink(scope, element, attrs) {
-        // console.log('artistsNetwork')
-        // console.log(scope.network)
 
-        scope.$watch('network.nodes', function() {
-        	if (scope.network.nodes.length > 2) {
-        		scope.drawGraph(scope.network)
-        	}
-		});
+		scope.$watch('jsnxGraph', function(){
+			// console.log('info', jsnx.info(scope.jsnxGraph))
+			var networkData = {'nodes':[],'links':[]}
+			scope.jsnxGraph.nodes(true).forEach(function(n){
+				var _node = {
+					'id': n[0],
+					'label':n[1].label
+				}
+				networkData.nodes.push(_node)
+			})
+			scope.jsnxGraph.edges(true).forEach(function(l){
+				var _link = {
+					'source':l[0],
+					'target':l[1]
+				}
+				networkData.links.push(_link)
+			})
+			scope.drawGraph(networkData)
+			scope.network = networkData
+		})
 
         scope.drawGraph = function(data) {
-
-        			var graph = _.cloneDeep(data)
-
+        			
+        			// var graph = _.cloneDeep(data)
+        			var graph = data
+					console.log('draw graph', graph)
 					function dragstarted(d) {
 					  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
 					  d.fx = d.x;
