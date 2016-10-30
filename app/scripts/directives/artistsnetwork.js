@@ -16,10 +16,14 @@ angular.module('artistsLinkApp')
         // console.log(scope.network)
 
         scope.$watch('network.nodes', function() {
-		    	scope.drawGraph(scope.network)
-				});
+        	if (scope.network.nodes.length > 2) {
+        		scope.drawGraph(scope.network)
+        	}
+		});
 
-        scope.drawGraph = function(graph) {
+        scope.drawGraph = function(data) {
+
+        			var graph = _.cloneDeep(data)
 
 					function dragstarted(d) {
 					  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
@@ -38,11 +42,25 @@ angular.module('artistsLinkApp')
 					  d.fy = null;
 					}
 
+					
+
 					var svg = d3.select("#svg-graph"),
 					    width = +svg.attr("width"),
 					    height = +svg.attr("height");
 
+
 					svg.html('')
+
+					// console.log( parseInt(d3.select('artists-network').style('width')) )
+
+					svg.append("rect")
+					    .attr("width", parseInt(d3.select('artists-network').style('width')) )
+					    .attr("height", parseInt(d3.select('artists-network').style('width'))*0.75 )
+					    .style("fill", "none")
+					    .style("pointer-events", "all")
+					    .call(d3.zoom()
+					        .scaleExtent([1 / 10, 4])
+					        .on("zoom", zoomed));
 
 					var color = d3.scaleOrdinal(d3.schemeCategory20);
 
@@ -51,35 +69,42 @@ angular.module('artistsLinkApp')
 					    .force("charge", d3.forceManyBody())
 					    .force("center", d3.forceCenter(width / 2, height / 2));
 
+					var g = svg.append("g")
+						.attr("class","graph")
 
-					var link = svg.append("g")
+					var link = g.append("g")
 				    	.attr("class", "links")
 				    .selectAll("line")
 			    	.data(graph.links)
 				    .enter().append("line")
 					    .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
 
-				  var node = svg.append("g")
-				      .attr("class", "nodes")
-				    .selectAll("circle")
-				    .data(graph.nodes)
-				    .enter().append("circle")
-				      .attr("r", 5)
-				      .attr("fill", function(d) { return color(d.group); })
-				      .call(d3.drag()
-				          .on("start", dragstarted)
-				          .on("drag", dragged)
-				          .on("end", dragended));
+					var node = g.append("g")
+					      .attr("class", "nodes")
+					    .selectAll("circle")
+					    .data(graph.nodes)
+					    .enter().append("g")
+					    	.attr("class", "node")
 
-				  node.append("title")
-				      .text(function(d) { return d.id; });
+				    node.append("circle")
+					    .attr("r", 5)
+					    .attr("fill", function(d) { return color(d.group); })
+					    .call(d3.drag()
+					        .on("start", dragstarted)
+					        .on("drag", dragged)
+					        .on("end", dragended));
 
-				  simulation
-				      .nodes(graph.nodes)
-				      .on("tick", ticked);
+					node.append("text")
+					  		.attr("dx", 12)
+	      				.attr("dy", ".35em")
+					    	.text(function(d) { return d.label; });
 
-				  simulation.force("link")
-				      .links(graph.links);
+					simulation
+					    .nodes(graph.nodes)
+					    .on("tick", ticked);
+
+					simulation.force("link")
+					    .links(graph.links);
 
 					function ticked() {
 					    link
@@ -88,10 +113,20 @@ angular.module('artistsLinkApp')
 					        .attr("x2", function(d) { return d.target.x; })
 					        .attr("y2", function(d) { return d.target.y; });
 
-					    node
-					        .attr("cx", function(d) { return d.x; })
-					        .attr("cy", function(d) { return d.y; });
+					    // node
+					    //     .attr("cx", function(d) { return d.x; })
+					    //     .attr("cy", function(d) { return d.y; });
+
+					    node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+
 					  }
+
+					
+
+					function zoomed() {
+					  g.attr("transform", d3.event.transform);
+					}
 
         }
 
