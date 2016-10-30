@@ -42,12 +42,9 @@ angular.module('artistsLinkApp')
 					  d.fy = null;
 					}
 
-					
-
 					var svg = d3.select("#svg-graph"),
 					    width = +svg.attr("width"),
 					    height = +svg.attr("height");
-
 
 					svg.html('')
 
@@ -84,7 +81,15 @@ angular.module('artistsLinkApp')
 					    .selectAll("circle")
 					    .data(graph.nodes)
 					    .enter().append("g")
-					    	.attr("class", "node")
+					    	.attr("class", function(d){
+					    		if(d.id == scope.artistLeft.id || d.id == scope.artistRight.id){
+					    			d.group = 1
+					    			return "node starting-point"
+					    		} else {
+					    			d.group = 2
+					    			return "node"
+					    		}
+					    	})
 
 				    node.append("circle")
 					    .attr("r", 5)

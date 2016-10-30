@@ -104,6 +104,11 @@ artists-network {
   stroke-width: 1.5px;
 }
 
+.nodes .node.starting-point circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
 .node text {
     pointer-events: none;
     font: 4px sans-serif;

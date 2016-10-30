@@ -32,7 +32,7 @@ angular.module('artistsLinkApp')
 		$scope.artistLeft = {};
 		$scope.artistRight = {};
 
-		apiService.getArtist('6an9YCv0S0Mj3rsaD9Ahpz').then(
+		apiService.getArtist('3PhoLpVuITZKcymswpck5b').then(
 			function(data){
 				$scope.artistLeft.id = data.id
 				$scope.artistLeft.label = data.name
@@ -56,18 +56,13 @@ angular.module('artistsLinkApp')
 	    $scope.network = { 'nodes':[], 'links': [] }
 	    $scope.network.nodes.push($scope.artistLeft)
 	    $scope.network.nodes.push($scope.artistRight)
-
-	    // console.log($scope.toFetch)
 	}
 
 	$scope.reset()
 
 	$scope.implicitGrant = getAccess.implicitGrant()
 
-	console.log('after hash',$location.hash())
-
     $scope.fetchRelated = function() {
-    	// console.log('to fetch',$scope.toFetch.length)
 
     	var discoveredArtists = []
 
@@ -79,6 +74,7 @@ angular.module('artistsLinkApp')
     		var url = 'https://api.spotify.com/v1/artists/{id}/related-artists'
 	    	url = url.replace('{id}',artist.id)
 
+	    	console.log('starting calls')
 	    	setTimeout(function(){ 
 
 	    		apiService.getRelated(url).then(
@@ -101,9 +97,6 @@ angular.module('artistsLinkApp')
 								'target':a.id
 							}
 
-							// newNodes.push(thisNode)
-							// newEdges.push(thisEdge)
-
 							if( !_.find($scope.network.nodes, { 'id': thisNode.id}) ) {
 								newNodes.push(thisNode)
 							}
@@ -117,22 +110,16 @@ angular.module('artistsLinkApp')
 							if (i+1 == data.artists.length) {
 								
 								if (index+1 == $scope.toFetch.length) {
-
+									console.log('calculating network')
 									$scope.network.nodes = _.unionWith($scope.network.nodes, newNodes, _.isEqual);
 									$scope.network.links = _.unionWith($scope.network.links, newEdges, _.isEqual);
-									
-									// console.log('nodes',newNodes.length,$scope.network.nodes.length)
-									// console.log('edges',newEdges.length,$scope.network.links.length)
 
 									$scope.toFetch = []
-
+									console.log('calculating next search')
 									$scope.toFetch = _.differenceWith(discoveredArtists, $scope.network.links, function(arrVal,othVal){
-										// console.log(arrVal.id, othVal.source)
 										if(arrVal.id == othVal.source) {
-											// console.log('presente', arrVal.id, othVal.source)
 											return true
 										} else {
-											// console.log('assente', arrVal.id, othVal.source)
 											return false
 										}
 									})
@@ -186,7 +173,7 @@ angular.module('artistsLinkApp')
 		$scope.network.links.forEach(function(l){
 			G.addEdge(l.source,l.target);
 		})
-		
+		// http://jsnetworkx.org/api/#/v/v0.3.4/bidirectionalShortestPath
 		try {
 			var path = jsnx.bidirectionalShortestPath(G, $scope.artistLeft.id, $scope.artistRight.id);
 			console.log(path)
