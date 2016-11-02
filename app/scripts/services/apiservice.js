@@ -8,16 +8,16 @@
  * Factory in the artistsLinkApp.
  */
 angular.module('artistsLinkApp')
-  .factory('apiService', function ($q, $http, getAccess) {
+  .factory('apiService', function ($q, $http, getAccess, storeAccess) {
 
     // Public API here
     return {
       getRelated : function(url){
         var deferred = $q.defer();
         var headers = {}
-        if(getAccess.accessToken()){
-          headers['Authorization'] = 'Bearer ' + getAccess.accessToken()
-          console.log(getAccess.accessToken())
+        // console.log(storeAccess.returnToken())
+        if(storeAccess.returnToken() != 'no access token'){
+          headers['Authorization'] = 'Bearer ' + storeAccess.returnToken()
         }
         $http.get(url, headers).success(function(data){
           deferred.resolve(data);

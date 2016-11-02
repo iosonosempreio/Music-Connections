@@ -8,7 +8,7 @@
  * Controller of the artistsLinkApp
  */
 angular.module('artistsLinkApp')
-  .controller('MainCtrl', function ($scope, apiService, getAccess, $location) {
+  .controller('MainCtrl', function ($scope, apiService, getAccess, $location,storeAccess) {
     this.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',
@@ -29,6 +29,9 @@ angular.module('artistsLinkApp')
 	// lucio dalla		spotify:artist:25MkkfEousyfp2eyh38FUl
 	// lorde			spotify:artist:163tK9Wjr9P9DmM0AVK7lm
 	// cesare cremonini	spotify:artist:396Jr76018oUMR6QBnqT8T
+	// afterhours		spotify:artist:4LAGemASxODFta2tWSAucy
+	// CCCP				spotify:artist:18cezosJ2J9c3XZ7uVmMf0
+
 
 	$scope.reset = function() {
 		$scope.artistLeft = {};
@@ -44,7 +47,7 @@ angular.module('artistsLinkApp')
 			}
 		);
 
-		apiService.getArtist('6tbjWDEIzxoDsBA1FuhfPW').then(
+		apiService.getArtist('3PhoLpVuITZKcymswpck5b').then(
 			function(data){
 				$scope.artistRight.id = data.id
 				$scope.artistRight.label = data.name
@@ -61,11 +64,15 @@ angular.module('artistsLinkApp')
 
 	    $scope.jsnxGraph = new jsnx.Graph()
 	    $scope.fetched = []
+
+	    $scope.implicitGrantLink = getAccess.implicitGrant()
+	    $scope.accessToken = storeAccess.returnToken()
+	    console.log($scope.accessToken)
 	}
 
 	$scope.reset()
 
-	$scope.implicitGrant = getAccess.implicitGrant()
+	
 
     $scope.fetchRelated = function() {
 
@@ -172,7 +179,7 @@ angular.module('artistsLinkApp')
 									console.log('to fetch', $scope.toFetch.length, '/', discoveredArtists.length)
 									// console.log('network', $scope.network)
 									// console.log('calculating shortest path (if exists)')
-									$scope.getShortestPath();
+									$scope.getShortestPath(true);
 
 								}
 							}
@@ -183,13 +190,13 @@ angular.module('artistsLinkApp')
 					}
 				);
 
-	    	}, index*1);
+	    	}, index/index);
 
 	    	
     	})
     }
 
-	$scope.getShortestPath = function() {
+	$scope.getShortestPath = function(proceed) {
 		try {
 			var path = jsnx.bidirectionalShortestPath($scope.jsnxGraph, $scope.artistLeft.id, $scope.artistRight.id);
 			$scope.conductiveNodes = []
@@ -205,8 +212,10 @@ angular.module('artistsLinkApp')
 				console.log(err)
 			}
 			var error = err
-			if(!path&&error.name == 'JSNetworkXNoPath'){
+			if(!path&&error.name == 'JSNetworkXNoPath'&&proceed==true){
 				setTimeout($scope.fetchRelated(),2000)
+			} else {
+				console.log('no path found at this stage')
 			}
 		}
 	}

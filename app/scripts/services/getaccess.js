@@ -10,7 +10,8 @@
 angular.module('artistsLinkApp')
   .factory('getAccess', function () {
 
-    var accessToken;
+    var accessToken,
+        clientId='1ba0be6d44454d2190c97a418d18edef';
 
     // Public API here
     return {
@@ -18,8 +19,8 @@ angular.module('artistsLinkApp')
         var url = 'https://accounts.spotify.com/authorize'
         url += '?' 
         var data = {
-          'client_id' : '1ba0be6d44454d2190c97a418d18edef',
-          'redirect_uri' : 'http://localhost:9000/#/connections',
+          'client_id' : clientId,
+          'redirect_uri' : 'http://localhost:9000',
           'scope' : '',
           'response_type' : 'token',
           'state' : '123'
@@ -30,11 +31,11 @@ angular.module('artistsLinkApp')
         url = url.slice(0, -1)
         return url
       },
-      clientId : function(){
-        return clientId;
-      },
-      accessToken : function(){
-        return accessToken;
-      }
+      // clientId : function(){
+      //   return clientId;
+      // },
+      // accessToken : function(){
+      //   return accessToken;
+      // }
     };
   });

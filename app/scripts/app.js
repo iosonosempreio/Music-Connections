@@ -17,10 +17,10 @@ angular
     'ngSanitize',
     'ngTouch'
   ])
-  .config(function ($routeProvider,$locationProvider) {
+  .config(function ($routeProvider, $locationProvider, storeAccessProvider) {
 
     $routeProvider
-      .when('/connections', {
+      .when('/', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl',
         controllerAs: 'main'
@@ -30,8 +30,14 @@ angular
         controller: 'AccessCtrl',
         controllerAs: 'main'
       })
-      // .otherwise({
-      //   redirectTo: '/connections'
-      // });
+      .otherwise({
+        redirectTo: function (routeParams, path, search) {
+          // console.log('routeParams',routeParams);
+          // console.log('path',path);
+          // console.log('search',search);
+          storeAccessProvider.setToken(path);
+          return "/";
+        }
+      });
 
   });
