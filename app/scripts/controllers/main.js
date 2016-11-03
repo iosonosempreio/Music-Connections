@@ -65,6 +65,7 @@ angular.module('artistsLinkApp')
 
 	    $scope.jsnxGraph = new jsnx.Graph()
 	    $scope.fetched = []
+	    $scope.conductiveNodes = undefined;
 
 	    $scope.implicitGrantLink = getAccess.implicitGrant()
 	    $scope.accessToken = storeAccess.returnToken()
@@ -168,87 +169,6 @@ angular.module('artistsLinkApp')
 
 		fetchingSync(counter);
 
-    // 	$scope.toFetch.forEach(function(artist, index){
-
-    // 		$scope.fetched.push(artist.id)
-    		
-    // 		var url = 'https://api.spotify.com/v1/artists/{id}/related-artists'
-	   //  	url = url.replace('{id}',artist.id)
-
-	   //  	console.log('starting calls')
-	   //  	setTimeout(function(){ 
-
-	   //  		apiService.getRelated(url).then(
-				// 	function(data){
-						
-				// 		data.artists.forEach(function(a, i){
-							
-				// 			var thisNode = {
-				// 				'id':a.id,
-				// 				'label':a.name
-				// 			}
-				// 			var thisEdge = {
-				// 				'id':artist.id+'-'+a.id,
-				// 				'source':artist.id,
-				// 				'target':a.id
-				// 			}
-
-				// 			newNodesRaw.push(thisNode)
-				// 			newEdgesRaw.push(thisEdge)
-
-				// 			discoveredArtists.push(a)
-				// 			discovered.push(a.id)
-
-				// 			if (i+1 == data.artists.length) {
-								
-				// 				if (index+1 == $scope.toFetch.length) {
-
-				// 					// create network in jsnx
-				// 					console.log('calculating network with jnsx')
-				// 					var subG = new jsnx.Graph();
-				// 					newNodesRaw.forEach(function(n){
-				// 						subG.addNode(n.id,{'label':n.label});
-				// 					})
-				// 					newEdgesRaw.forEach(function(l){
-				// 						subG.addEdge(l.source,l.target,{'id':l.id});
-				// 					})
-				// 					$scope.jsnxGraph = jsnx.compose($scope.jsnxGraph, subG)
-				// 					$scope.jsnxGraphInfo = jsnx.info($scope.jsnxGraph)
-				// 					// console.log('info', jsnx.info($scope.jsnxGraph))
-				// 					// console.log('number of nodes: ',$scope.jsnxGraph.numberOfNodes())
-				// 					// console.log($scope.jsnxGraph.nodes(true));
-				// 					// console.log('jsnx',$scope.jsnxGraph.edges(true).length);
-				// 					// console.log('links',$scope.network.links.length);
-
-
-				// 					$scope.toFetch = []
-
-				// 					console.log('calculating next search')
-
-				// 					var newToFetch = _.pullAll(discovered,$scope.fetched);
-				// 					newToFetch.forEach(function(a){
-				// 						var _new = {'id':a}
-				// 						$scope.toFetch.push(_new)
-				// 					})
-
-				// 					console.log('to fetch', $scope.toFetch.length, '/', discoveredArtists.length)
-				// 					// console.log('network', $scope.network)
-				// 					// console.log('calculating shortest path (if exists)')
-				// 					$scope.getShortestPath(true);
-
-				// 				}
-				// 			}
-				// 		})
-				// 	},
-				// 	function(error){
-				// 		console.log(error)
-				// 	}
-				// );
-
-	   //  	}, index/index);
-
-	    	
-    // 	})
     }
 
 	$scope.getShortestPath = function(proceed) {
