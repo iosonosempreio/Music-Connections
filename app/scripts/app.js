@@ -15,7 +15,11 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    // 'ngTouch',
+    'angucomplete',
+    'ngMaterial',
+    'ngMessages',
+    // 'material.svgAssetsCache'
   ])
   .config(function ($routeProvider, $locationProvider, storeAccessProvider) {
 

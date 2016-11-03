@@ -14,24 +14,26 @@ angular.module('artistsLinkApp')
       link: function postLink(scope, element, attrs) {
 
 		scope.$watch('jsnxGraph', function(){
-			// console.log('info', jsnx.info(scope.jsnxGraph))
-			var networkData = {'nodes':[],'links':[]}
-			scope.jsnxGraph.nodes(true).forEach(function(n){
-				var _node = {
-					'id': n[0],
-					'label':n[1].label
-				}
-				networkData.nodes.push(_node)
-			})
-			scope.jsnxGraph.edges(true).forEach(function(l){
-				var _link = {
-					'source':l[0],
-					'target':l[1]
-				}
-				networkData.links.push(_link)
-			})
-			scope.drawGraph(networkData)
-			scope.network = networkData
+			if (scope.conductiveNodes) {
+				// console.log('info', jsnx.info(scope.jsnxGraph))
+				var networkData = {'nodes':[],'links':[]}
+				scope.jsnxGraph.nodes(true).forEach(function(n){
+					var _node = {
+						'id': n[0],
+						'label':n[1].label
+					}
+					networkData.nodes.push(_node)
+				})
+				scope.jsnxGraph.edges(true).forEach(function(l){
+					var _link = {
+						'source':l[0],
+						'target':l[1]
+					}
+					networkData.links.push(_link)
+				})
+				scope.drawGraph(networkData)
+				scope.network = networkData
+			}
 		})
 
         scope.drawGraph = function(data) {

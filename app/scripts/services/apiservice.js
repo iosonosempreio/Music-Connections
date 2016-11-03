@@ -26,7 +26,7 @@ angular.module('artistsLinkApp')
         });
 
          return deferred.promise;
-       },
+      },
       getArtist : function(id){
         var url = 'https://api.spotify.com/v1/artists/{id}/'
         url = url.replace('{id}',id)
@@ -38,6 +38,16 @@ angular.module('artistsLinkApp')
         });
 
          return deferred.promise;
-       }
+      },
+      queryArtist : function(query){
+        var url = 'https://api.spotify.com/v1/search'
+        var deferred = $q.defer();
+        $http.get(url,{params:{"q": query,"type":"artist",limit:5}}).success(function(data){
+          deferred.resolve(data);
+        }).error(function(error){
+          deferred.reject("An error occured while fetching file",error);
+        });
+         return deferred.promise;
+        }
     };
   });

@@ -1,24 +1,29 @@
 <div class="container">
 
   <div class="row">
-    <div col-xs-12>
+    <auto-complete></auto-complete>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>Link for token</h2>
       <a ng-href="{{implicitGrantLink}}" ng-if="accessToken=='no access token'">{{implicitGrantLink}}</a>
     </div>
   </div>
 
-  <div class="row">
+<!--   <div class="row">
     <div class="col-xs-4">
-    	<p>{{artistLeft.label}}</p>
+    	<p>{{artistLeft.name}}</p>
       <input type="text" ng-model="artistLeft.id" ng-model-options="{ debounce: 800 }" onclick="" placeholder="Enter artist name" autofocus />
     </div>
     <div class="col-xs-4">
-    	<p>{{artistRight.label}}</p>
+    	<p>{{artistRight.name}}</p>
     	<input type="text" ng-model="artistRight.id" ng-model-options="{ debounce: 800 }" onclick="select()" placeholder="Enter artist name"/>
     </div>
     <div class="col-xs-4">
       <p>{{jsnxGraphInfo}}</p>
     </div>
-  </div>
+  </div> -->
   <div class="row">
   	<div class="col-xs-12">
   		<button type="button" class="btn btn-default" ng-click="fetchRelated(artistLeft.id,artistRight.id)" ng-if="!conductiveNodes">Go</button>
@@ -26,6 +31,15 @@
       <button type="button" class="btn btn-default" ng-click="getShortestPath(false)">Shortest Path</button>
       <button type="button" class="btn btn-default" ng-click="saveData('json')">Save (json)</button>
   	</div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="progress">
+        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%;">
+          {{progress | number:0}}% Complete
+        </div>
+      </div>
+    </div>
   </div>
   <div class="row">
     <div class="col-xs-12" ng-if="conductiveNodes">Shortest Path:</div>

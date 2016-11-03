@@ -1,0 +1,16 @@
+<div class="col-xs-6">
+	<input id="" placeholder="search an artist" ng-model="leftQuery" ng-model-options="{ debounce: 500 }">
+	<div ng-repeat="artist in leftQueryResults">
+		<div ng-click="setArtist('left',artist)">{{artist.name}}</div>
+	</div>
+	<!-- <h6>{{ artistLeft }}</h6> -->
+</div>
+<div class="col-xs-6">
+	<input id="" placeholder="search an artist" ng-model="rightQuery" ng-model-options="{ debounce: 500 }">
+	<div ng-repeat="artist in rightQueryResults">
+		<div ng-click="setArtist('right',artist)">{{artist.name}}</div>
+	</div>
+	<!-- <h6>{{ artistRight }}</h6> -->
+</div>
+
+

@@ -15,7 +15,9 @@
     "cytoscape": "^2.7.10",
     "d3": "^4.3.0",
     "file-saver": "^1.3.3",
-    "jsnetworkx": "^0.3.4"
+    "jsnetworkx": "^0.3.4",
+    "angular-material": "^1.1.1",
+    "angucomplete": "*"
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"

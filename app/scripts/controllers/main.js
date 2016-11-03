@@ -8,12 +8,13 @@
  * Controller of the artistsLinkApp
  */
 angular.module('artistsLinkApp')
-  .controller('MainCtrl', function ($scope, apiService, getAccess, $location,storeAccess) {
+  .controller('MainCtrl', function ($scope, apiService, getAccess, $location,storeAccess, $timeout, $q, $log) {
     this.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',
       'Karma'
     ];
+
 
     // damon albarn 	spotify:artist:0O98jlCaPzvsoei6U5jfEL
     // the subways		spotify:artist:4BntNFyiN3VGG4hhRRZt9d
@@ -37,25 +38,25 @@ angular.module('artistsLinkApp')
 		$scope.artistLeft = {};
 		$scope.artistRight = {};
 
-		apiService.getArtist('25MkkfEousyfp2eyh38FUl').then(
-			function(data){
-				$scope.artistLeft.id = data.id
-				$scope.artistLeft.label = data.name
-			},
-			function(error){
-				console.log(error)
-			}
-		);
+		// apiService.getArtist('1dfeR4HaWDbWqFHLkxsg1d').then(
+		// 	function(data){
+		// 		$scope.artistLeft.id = data.id
+		// 		$scope.artistLeft.label = data.name
+		// 	},
+		// 	function(error){
+		// 		console.log(error)
+		// 	}
+		// );
 
-		apiService.getArtist('3PhoLpVuITZKcymswpck5b').then(
-			function(data){
-				$scope.artistRight.id = data.id
-				$scope.artistRight.label = data.name
-			},
-			function(error){
-				console.log(error)
-			}
-		);
+		// apiService.getArtist('25MkkfEousyfp2eyh38FUl').then(
+		// 	function(data){
+		// 		$scope.artistRight.id = data.id
+		// 		$scope.artistRight.label = data.name
+		// 	},
+		// 	function(error){
+		// 		console.log(error)
+		// 	}
+		// );
 
 	    $scope.toFetch = [$scope.artistLeft,$scope.artistRight]
 	    // $scope.network = { 'nodes':[], 'links': [] }
@@ -72,128 +73,182 @@ angular.module('artistsLinkApp')
 
 	$scope.reset()
 
-	
+	$scope.$watch('artistLeft',function(){
+		$scope.toFetch = [$scope.artistLeft,$scope.artistRight]
+		console.log($scope.toFetch)
+	})
+
+	$scope.$watch('artistRight',function(){
+		$scope.toFetch = [$scope.artistLeft,$scope.artistRight]
+		console.log($scope.toFetch)
+	})
 
     $scope.fetchRelated = function() {
 
+
+
     	var discoveredArtists = []
     	var discovered = []
-    	// old way for calculating network
-  //   	var newNodes = []
-		// var newEdges = []
-
-		// not perform the _.find on the collected nodes
 		var newNodesRaw = []
 		var newEdgesRaw = []
 
-    	$scope.toFetch.forEach(function(artist, index){
+		var counter = 0
 
-    		$scope.fetched.push(artist.id)
-    		
-    		var url = 'https://api.spotify.com/v1/artists/{id}/related-artists'
-	    	url = url.replace('{id}',artist.id)
+		function fetchingSync(index){
+			// console.log($scope.toFetch[index])
+			var thisArtist = $scope.toFetch[index]
+			$scope.fetched.push(thisArtist.id)
+			var url = 'https://api.spotify.com/v1/artists/{id}/related-artists'.replace('{id}',thisArtist.id)
 
-	    	console.log('starting calls')
-	    	setTimeout(function(){ 
+			// console.log('start call')
+			apiService.getRelated(url).then(
+				function(data){
+					// save data and make calculations
+					data.artists.forEach(function(a,i){
+						var thisNode = {
+							'id':a.id,
+							'label':a.name
+						}
+						var thisEdge = {
+							'id':thisArtist.id+'-'+a.id,
+							'source':thisArtist.id,
+							'target':a.id
+						}
 
-	    		apiService.getRelated(url).then(
-					function(data){
-						
-						data.artists.forEach(function(a, i){
-							
-							var thisNode = {
-								'id':a.id,
-								'label':a.name
-							}
-							var thisEdge = {
-								'id':artist.id+'-'+a.id,
-								'source':artist.id,
-								'target':a.id
-							}
+						newNodesRaw.push(thisNode)
+						newEdgesRaw.push(thisEdge)
 
-							// old way for calculating network
-							// if( !_.find($scope.network.nodes, { 'id': thisNode.id}) ) {
-							// 	newNodes.push(thisNode)
-							// }
-							// if( !_.find($scope.network.links, { 'id': thisEdge.id}) ) {
-							// 	newEdges.push(thisEdge)
-							// }
+						discoveredArtists.push(a)
+						discovered.push(a.id)
+					});
 
-							newNodesRaw.push(thisNode)
-							newEdgesRaw.push(thisEdge)
+					// console.log('Done', counter+1,'/',$scope.toFetch.length)
+					counter++
+					$scope.progress = ((counter+1)*100)/$scope.toFetch.length
+					if (counter<$scope.toFetch.length){
+						fetchingSync(counter)
+					} else {
+						// do stuff
+						console.log('All done, ', counter)
 
-							discoveredArtists.push(a)
-							discovered.push(a.id)
-
-							if (i+1 == data.artists.length) {
-								
-								if (index+1 == $scope.toFetch.length) {
-									
-									// old way for calculating network
-									// console.log('newNodesRaw: ',newNodesRaw)
-									// console.log('newEdgesRaw: ',newEdgesRaw)
-									// create network manually, not the best
-									// console.log('calculating network')
-									// $scope.network.nodes = _.unionWith($scope.network.nodes, newNodes, _.isEqual);
-									// $scope.network.links = _.unionWith($scope.network.links, newEdges, _.isEqual);
-
-									// create network in jsnx
-									console.log('calculating network with jnsx')
-									var subG = new jsnx.Graph();
-									newNodesRaw.forEach(function(n){
-										subG.addNode(n.id,{'label':n.label});
-									})
-									newEdgesRaw.forEach(function(l){
-										subG.addEdge(l.source,l.target,{'id':l.id});
-									})
-									$scope.jsnxGraph = jsnx.compose($scope.jsnxGraph, subG)
-									$scope.jsnxGraphInfo = jsnx.info($scope.jsnxGraph)
-									// console.log('info', jsnx.info($scope.jsnxGraph))
-									// console.log('number of nodes: ',$scope.jsnxGraph.numberOfNodes())
-									// console.log($scope.jsnxGraph.nodes(true));
-									// console.log('jsnx',$scope.jsnxGraph.edges(true).length);
-									// console.log('links',$scope.network.links.length);
-
-
-									$scope.toFetch = []
-
-									console.log('calculating next search')
-									// old way for calculating next calls
-									// $scope.toFetch = _.differenceWith(discoveredArtists, $scope.network.links, function(arrVal,othVal){
-									// 	if(arrVal.id == othVal.source) {
-									// 		return true
-									// 	} else {
-									// 		return false
-									// 	}
-									// })
-
-									var newToFetch = _.pullAll(discovered,$scope.fetched);
-									newToFetch.forEach(function(a){
-										var _new = {'id':a}
-										$scope.toFetch.push(_new)
-									})
-									// console.log('new to fetch',newToFetch.length)
-
-									// $scope.toFetch = _.pullAll(discovered,$scope.fetched);
-
-									console.log('to fetch', $scope.toFetch.length, '/', discoveredArtists.length)
-									// console.log('network', $scope.network)
-									// console.log('calculating shortest path (if exists)')
-									$scope.getShortestPath(true);
-
-								}
-							}
+						// create network in jsnx
+						// console.log('calculating network with jnsx')
+						var subG = new jsnx.Graph();
+						newNodesRaw.forEach(function(n){
+							subG.addNode(n.id,{'label':n.label});
 						})
-					},
-					function(error){
-						console.log(error)
-					}
-				);
+						newEdgesRaw.forEach(function(l){
+							subG.addEdge(l.source,l.target,{'id':l.id});
+						})
+						$scope.jsnxGraph = jsnx.compose($scope.jsnxGraph, subG)
+						$scope.jsnxGraphInfo = jsnx.info($scope.jsnxGraph)
+						console.log(jsnx.degreeHistogram($scope.jsnxGraph))
 
-	    	}, index/index);
+						// console.log('calculating next search')
+						counter = 0;
+						$scope.toFetch = []
+						var newToFetch = _.pullAll(discovered,$scope.fetched);
+						newToFetch.forEach(function(a){
+							var _new = {'id':a}
+							$scope.toFetch.push(_new)
+						})
+
+						console.log('to fetch', $scope.toFetch.length, '/', discoveredArtists.length)
+						// console.log('network', $scope.network)
+						// console.log('calculating shortest path (if exists)')
+						$scope.getShortestPath(true);
+
+					}
+
+				},
+				function(error){
+					console.log('Error', error)
+			});
+		}
+
+		fetchingSync(counter);
+
+    // 	$scope.toFetch.forEach(function(artist, index){
+
+    // 		$scope.fetched.push(artist.id)
+    		
+    // 		var url = 'https://api.spotify.com/v1/artists/{id}/related-artists'
+	   //  	url = url.replace('{id}',artist.id)
+
+	   //  	console.log('starting calls')
+	   //  	setTimeout(function(){ 
+
+	   //  		apiService.getRelated(url).then(
+				// 	function(data){
+						
+				// 		data.artists.forEach(function(a, i){
+							
+				// 			var thisNode = {
+				// 				'id':a.id,
+				// 				'label':a.name
+				// 			}
+				// 			var thisEdge = {
+				// 				'id':artist.id+'-'+a.id,
+				// 				'source':artist.id,
+				// 				'target':a.id
+				// 			}
+
+				// 			newNodesRaw.push(thisNode)
+				// 			newEdgesRaw.push(thisEdge)
+
+				// 			discoveredArtists.push(a)
+				// 			discovered.push(a.id)
+
+				// 			if (i+1 == data.artists.length) {
+								
+				// 				if (index+1 == $scope.toFetch.length) {
+
+				// 					// create network in jsnx
+				// 					console.log('calculating network with jnsx')
+				// 					var subG = new jsnx.Graph();
+				// 					newNodesRaw.forEach(function(n){
+				// 						subG.addNode(n.id,{'label':n.label});
+				// 					})
+				// 					newEdgesRaw.forEach(function(l){
+				// 						subG.addEdge(l.source,l.target,{'id':l.id});
+				// 					})
+				// 					$scope.jsnxGraph = jsnx.compose($scope.jsnxGraph, subG)
+				// 					$scope.jsnxGraphInfo = jsnx.info($scope.jsnxGraph)
+				// 					// console.log('info', jsnx.info($scope.jsnxGraph))
+				// 					// console.log('number of nodes: ',$scope.jsnxGraph.numberOfNodes())
+				// 					// console.log($scope.jsnxGraph.nodes(true));
+				// 					// console.log('jsnx',$scope.jsnxGraph.edges(true).length);
+				// 					// console.log('links',$scope.network.links.length);
+
+
+				// 					$scope.toFetch = []
+
+				// 					console.log('calculating next search')
+
+				// 					var newToFetch = _.pullAll(discovered,$scope.fetched);
+				// 					newToFetch.forEach(function(a){
+				// 						var _new = {'id':a}
+				// 						$scope.toFetch.push(_new)
+				// 					})
+
+				// 					console.log('to fetch', $scope.toFetch.length, '/', discoveredArtists.length)
+				// 					// console.log('network', $scope.network)
+				// 					// console.log('calculating shortest path (if exists)')
+				// 					$scope.getShortestPath(true);
+
+				// 				}
+				// 			}
+				// 		})
+				// 	},
+				// 	function(error){
+				// 		console.log(error)
+				// 	}
+				// );
+
+	   //  	}, index/index);
 
 	    	
-    	})
+    // 	})
     }
 
 	$scope.getShortestPath = function(proceed) {
