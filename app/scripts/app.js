@@ -16,22 +16,23 @@ angular
     'ngRoute',
     'ngSanitize',
     // 'ngTouch',
-    'angucomplete',
-    'ngMaterial',
-    'ngMessages',
-    // 'material.svgAssetsCache'
   ])
   .config(function ($routeProvider, $locationProvider, storeAccessProvider) {
 
     $routeProvider
       .when('/', {
+        templateUrl: 'views/home.html',
+        controller: 'HomeCtrl',
+        controllerAs: 'main'
+      })
+      .when('/main', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl',
         controllerAs: 'main'
       })
-      .when('/myAccess', {
-        templateUrl: 'views/access.html',
-        controller: 'AccessCtrl',
+      .when('/perform', {
+        templateUrl: 'views/perform.html',
+        controller: 'PerformCtrl',
         controllerAs: 'main'
       })
       .otherwise({

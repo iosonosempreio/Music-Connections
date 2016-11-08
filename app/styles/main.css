@@ -1,3 +1,152 @@
+body {
+  font-family: 'Source Code Pro', monospace;
+}
+
+h1 {
+  /* MUSIC FAMILIES: */
+  font-size: 48px;
+  font-weight: 400;
+  color: #000000;
+  letter-spacing: 1px;
+}
+
+h3 {
+  /* Discover how artists: */
+  font-size: 24px;
+  /*color: #000000;*/
+  letter-spacing: 0px;
+  text-align: center;
+}
+
+h4 {
+  /* Search AN ARTIST HER: */
+  /*font-family: SourceCodePro-Regular;*/
+  font-size: 12px;
+  color: #000000;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+a {
+  color: black;
+  font-weight: 600;
+}
+
+a:hover {
+  color: black;
+}
+
+.navbar.navbar-default {
+  background-color: rgba(0,0,0,0.7);
+  border: none;
+  border-radius: 0px;
+  color: white;
+}
+
+.navbar-default .navbar-nav > li > a , .navbar-default .navbar-brand {
+    color: white;
+}
+
+.navbar-default .navbar-nav > li > a {
+  text-transform: lowercase;
+}
+
+.navbar-default .navbar-nav > li > a:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.navbar-default .navbar-nav > li > a::before {
+  content: '.';
+}
+
+.navbar a {
+  font-weight: 400;
+}
+
+/*backgrounds*/
+.background {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  /*background-color: grey;*/
+  z-index: -100;
+  overflow: hidden;
+}
+
+.background .left, .background .right{
+  position: absolute;
+  top: -5vh;
+  width: 55vw;
+  height: 110vh;
+  float: left;
+  box-sizing: border-box;
+  transform: rotate(7deg);
+  overflow: hidden;
+}
+
+.background .left{
+  left: -5vw;
+  border-right: 1px solid black;
+}
+
+.background .right{
+  right: -5vw;
+}
+
+.background .left img {
+  transform: rotate(-7deg);
+  width: 100%;
+  height: 100%;
+  position: relative;
+  left: 5vw;
+}
+
+.background .right img {
+  transform: rotate(-7deg);
+  width: 100%;
+  height: 100%;
+  position: relative;
+  right: 5vw;
+}
+
+/*.background .left:after, .background .right:after {
+  content: '';
+  background-size: cover;
+  background-position: center;
+  display: block;
+  width: 55vw;
+  height: 110vh;
+  transform: rotate(0deg);
+}*/
+
+/*.background .left:after {
+  background-image: url(https://i.scdn.co/image/85d8c54fa0ab3d3d6d20c4926a3511f9adfd4e9f);
+}
+
+.background .right:after {
+  background-image: url(https://i.scdn.co/image/ab6d5c233f651cbd20d47ab5dcee70afc0cd8837);
+}*/
+
+auto-complete .input-box {
+width: 50%;
+    float: left;
+    text-align: center;
+}
+
+auto-complete input {
+  border:none;
+  border-bottom: 1px solid #aaaaaa;
+  width: 80%;
+  margin: auto;
+  text-align: center;
+  height: 50px;
+}
+
+
 
 artists-network {
   width: 100%;

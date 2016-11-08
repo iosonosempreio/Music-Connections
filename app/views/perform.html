@@ -1,0 +1,18 @@
+<div class="container-fluid">
+	<div class="background">
+		<div class="left">
+			<img src="" ng-if="artistLeft.images" ng-style="{'background-image':'url({{ artistLeft.images[0].url }})'}">
+		</div>
+		<div class="right">
+			<img src="" ng-if="artistRight.images" ng-style="{'background-image':'url({{ artistRight.images[0].url }})'}">
+		</div>
+	</div>
+	<div class="centered">
+		<div class="">
+			<h3>Discover how artists are connected<br/>by chains of similarities.</h3>
+		</div>
+		<div class="">
+			<auto-complete></auto-complete>
+		</div>
+	</div>
+</div>

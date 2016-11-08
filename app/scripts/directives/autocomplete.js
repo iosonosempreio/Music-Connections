@@ -47,10 +47,12 @@ angular.module('artistsLinkApp')
         scope.setArtist = function(container, content) {
         	if (container == 'left'){
         		scope.artistLeft = content
+                console.log(content)
         		scope.leftQueryResults = []
         		scope.leftQuery = scope.artistLeft.name
         	} else if (container == 'right') {
         		scope.artistRight = content
+                console.log(content)
         		scope.rightQueryResults = []
         		scope.rightQuery = scope.artistRight.name
         	}

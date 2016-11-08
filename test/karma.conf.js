@@ -34,10 +34,6 @@ module.exports = function(config) {
       'bower_components/d3/d3.js',
       'bower_components/file-saver/FileSaver.js',
       'bower_components/jsnetworkx/jsnetworkx.js',
-      'bower_components/angular-aria/angular-aria.js',
-      'bower_components/angular-messages/angular-messages.js',
-      'bower_components/angular-material/angular-material.js',
-      'bower_components/angucomplete/angucomplete.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',

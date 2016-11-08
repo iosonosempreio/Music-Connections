@@ -8,8 +8,8 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" rel="stylesheet">
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
@@ -23,7 +23,7 @@
 
     <!-- Add your site or application content here -->
     <div class="navbar navbar-default" role="navigation">
-      <div class="container">
+      <div class="container-fluid">
         <div class="navbar-header">
 
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#js-navbar-collapse">
@@ -33,15 +33,16 @@
             <span class="icon-bar"></span>
           </button>
 
-          <a class="navbar-brand" href="#/">artistsLink</a>
+          <a class="navbar-brand" href="#/">Music Degrees</a>
         </div>
 
         <div class="collapse navbar-collapse" id="js-navbar-collapse">
 
-          <ul class="nav navbar-nav">
-            
-            <li><a ng-href="#/connections">Connections</a></li>
-            <li><a ng-href="#/myAccess">Access</a></li>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a ng-href="#/main">Main</a></li>
+            <li><a ng-href="#/perform">Perform</a></li>
+            <li><a ng-href="#/load">Load</a></li>
+            <li><a ng-href="#/about">About</a></li>
           </ul>
         </div>
       </div>
@@ -83,10 +84,6 @@
     <script src="bower_components/d3/d3.js"></script>
     <script src="bower_components/file-saver/FileSaver.js"></script>
     <script src="bower_components/jsnetworkx/jsnetworkx.js"></script>
-    <script src="bower_components/angular-aria/angular-aria.js"></script>
-    <script src="bower_components/angular-messages/angular-messages.js"></script>
-    <script src="bower_components/angular-material/angular-material.js"></script>
-    <script src="bower_components/angucomplete/angucomplete.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -102,6 +99,8 @@
         <script src="scripts/services/storeaccess.js"></script>
         <script src="scripts/directives/artistssearch.js"></script>
         <script src="scripts/directives/autocomplete.js"></script>
+        <script src="scripts/controllers/home.js"></script>
+        <script src="scripts/controllers/perform.js"></script>
         <!-- endbuild -->
 </body>
 </html>
