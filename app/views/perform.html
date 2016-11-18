@@ -1,18 +1,53 @@
 <div class="container-fluid">
-	<div class="background">
-		<div class="left">
-			<img src="" ng-if="artistLeft.images" ng-style="{'background-image':'url({{ artistLeft.images[0].url }})'}">
-		</div>
-		<div class="right">
-			<img src="" ng-if="artistRight.images" ng-style="{'background-image':'url({{ artistRight.images[0].url }})'}">
-		</div>
-	</div>
-	<div class="centered">
-		<div class="">
+	<div class="row">
+		<div class="col-xs-12">
 			<h3>Discover how artists are connected<br/>by chains of similarities.</h3>
 		</div>
-		<div class="">
-			<auto-complete></auto-complete>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 input-box">
+		    <!-- <pre>leftModel: {{ leftSelected | json }}</pre> -->
+		    <input type="text" ng-model="leftSelected" placeholder="artist name" uib-typeahead="artist.name for artist in searchArtist($viewValue)" typeahead-loading="loadingLeft" typeahead-no-results="noLeft" class="form-control" typeahead-template-url="./views/autocomplete-item.html" typeahead-on-select="artistLeft=$item">
+		    <i ng-show="loadingLeft" class="glyphicon glyphicon-refresh"></i>
+		    <div ng-show="noLeft">
+		      <i class="glyphicon glyphicon-remove"></i> No Results Found
+		    </div>
+		</div>
+
+		<div class="col-xs-6 input-box">
+		    <!-- <pre>rightModel: {{ rightSelected | json }}</pre> -->
+		    <input type="text" ng-model="rightSelected" placeholder="artist name" uib-typeahead="artist.name for artist in searchArtist($viewValue)" typeahead-loading="loadingRight" typeahead-no-results="noRight" class="form-control" typeahead-template-url="./views/autocomplete-item.html" typeahead-on-select="artistRight=$item">
+		    <i ng-show="loadingRight" class="glyphicon glyphicon-refresh"></i>
+		    <div ng-show="noRight">
+		      <i class="glyphicon glyphicon-remove"></i> No Results Found
+		    </div>
 		</div>
 	</div>
+	<div class="row">
+	  	<div class="col-xs-12">
+	  		<button type="button" class="btn btn-default" ng-disabled="conductiveNodes" ng-click="fetchRelated(artistLeft.id,artistRight.id)" Dng-if="!conductiveNodes">Go</button>
+			<button type="button" class="btn btn-default" ng-click="drawGraph(network)">.show graph</button>
+			<button type="button" class="btn btn-default" ng-click="getShortestPath(false)">Shortest Path</button>
+			<button type="button" class="btn btn-default" ng-click="saveData('json')">.saveJson</button>
+			<button type="button" class="btn btn-default" ng-click="reset()">.reset</button>
+	  	</div>
+	</div>
+	<div class="row">
+	    <div class="col-xs-12">
+			<div class="progress">
+				<div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%;">
+				  {{progress | number:0}}% Complete
+				</div>
+			</div>
+	    </div>
+	</div>
+</div>
+<div class="container-fluid">
+
+  <div class="row">
+    <div class="col-xs-12">
+      <artists-network></artists-network>
+    </div>
+  </div>
+
 </div>
