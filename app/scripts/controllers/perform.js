@@ -22,7 +22,8 @@ angular.module('artistsLinkApp')
     }
 
     $scope.disable = {
-      'go-btn':false
+      'go-btn':false,
+      'graph':false
     }
 
     $scope.searchArtist = function(query){

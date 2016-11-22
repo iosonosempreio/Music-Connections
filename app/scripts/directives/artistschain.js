@@ -13,78 +13,55 @@ angular.module('artistsLinkApp')
       restrict: 'E',
       link: function postLink(scope, element, attrs) {
         // element.text('this is the artistsChain directive');
-        console.log(element,element.height(),element.width())
+        // console.log(element,element.height(),element.width())
 
-        console.log("drawing chain")
+        // console.log("drawing chain")
 
       	var margin = {top: 0, right: element.width()*0.1, bottom: 0, left: element.width()*0.1},
       			width = element.width() - margin.left - margin.right,
       			height = 400 - margin.top - margin.bottom
-      			
-      	var chain = d3.select(element[0]).append('svg')
-        		.attr('id','chain')
-        		.attr('width',width + margin.left + margin.right)
-        		.attr('height',height + margin.top + margin.bottom)
-        	.append('g')
-        		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        function drawChain() {
-        	
+        var chain = d3.select(element[0]).append('div').attr('id','chain')
 
-        	var x = d3.scaleLinear().domain([0,scope.conductiveNodes.length-1]).range([0,width])
-
-        	// chain.selectAll('.circle')
-        	// 		.data(scope.conductiveNodes)
-        	// 	.enter().append('circle')
-        	// 		.attr('r',10)
-        	// 		.attr("cx", function(d,i) { return x(i); })
-      			// 	.attr("cy", function() { return height/2; });
+        function drawChain(data) {
+        	// console.log(data)
+        	var x = d3.scaleLinear().domain([0,data.length-1]).range([0,width])
 
       		var artists = chain.selectAll('.artist')
-      				.data(scope.conductiveNodes)
-      			.enter().append('g')
+      				.data(data)
+      			.enter().append('div')
+      				.attr('class','artist')
 
-      		artists.append('circle')
-      				.attr('r',10)
-        			.attr("cx", function(d,i) { return x(i); })
-      				.attr("cy", function() { return height/2; });
+      		artists.append('div')
+      				.attr('class','thumb')
+      				.style('background-image', function(d){
+      					if (d.images.length > 0){
+      						return 'url("'+d.images[d.images.length-1].url+'")'
+      					}
+      				})
 
-      		artists.append('text')
-      				.attr('x', function(d,i) { return x(i); })
-      				.attr('y', function() { return height/2 + 25; })
-      				.attr('text-anchor','middle')
-      				.text(function(d){ return d.label; })
-
-      	// 	artists.append("svg:image")
-							// .attr('x', function(d,i) { return x(i); })
-							// .attr('y', function() { return height/2; })
-							// .attr('width', 20)
-							// .attr('height', 24)
-							// .attr("xlink:href",function(d){
-							// 	console.log(d)
-							// 	if (d.id) {
-							// 		apiService.getArtist(d.id).then(
-							// 			function(data){
-							// 				console.log(data)
-							// 				return data.images[0].url
-							// 			},
-							// 			function(error){
-							// 				console.log(error)
-							// 			}
-							// 		)
-							// 	}
-								
-							// })
-
-
-
-
-
+      		artists.append('h4')
+      				.html(function(d){ return d.name })
 
         }
 
         scope.$on("draw",function(){
-          drawChain();
+        	var myData = []
+        	var n = 0;
+        	function getArtist(counter) {
+	        	apiService.getArtist(scope.conductiveNodes[counter].id).then(
+	        		function(data) {
+	        			myData.push(data);
+	        			counter ++;
+	        			if (counter < scope.conductiveNodes.length) {
+	        				getArtist(counter)
+	        			} else {
+	        				drawChain(myData);
+	        			}
+	        		}
+	        	);
+        	}
+        	getArtist(n);
         })
 
         

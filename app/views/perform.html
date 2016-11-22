@@ -46,8 +46,8 @@
 
   <div class="row">
     <div class="col-xs-12">
-      <!-- <artists-network></artists-network> -->
-      <artists-chain></artists-chain>
+      <artists-network ng-if="disable.graph"></artists-network>
+      <artists-chain ng-if="!disable.graph"></artists-chain>
     </div>
   </div>
 
@@ -55,7 +55,10 @@
 <div class="container">
 	<div class="row">
 		<div class="col-xs-12">
-			<button type="button" class="btn btn-default" ng-click="drawGraph(network)">.show graph</button>
+			<button type="button" class="btn btn-default" ng-click="disable.graph = !disable.graph">
+				<span ng-if="!disable.graph">.show graph</span>
+				<span ng-if="disable.graph">.show chain</span>
+			</button>
 			<button type="button" class="btn btn-default" ng-click="saveData('json')">.saveJson</button>
 			<button type="button" class="btn btn-default" ng-click="reset()">.reset</button>
 		</div>
