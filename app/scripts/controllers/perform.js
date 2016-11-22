@@ -68,6 +68,7 @@ angular.module('artistsLinkApp')
           $scope.conductiveNodes.push($scope.jsnxGraph.node.get(n))
         })
         console.log($scope.conductiveNodes)
+        $scope.$broadcast("draw")
 
       }
       catch(err) {
@@ -127,15 +128,18 @@ angular.module('artistsLinkApp')
             $scope.progress = ((counter+1)*100)/$scope.toFetch.length
             if (counter<$scope.toFetch.length){
               fetchingSync(counter)
-            } else {
+            }
+            else {
               // do stuff
+              counter--;
+              $scope.progress = ((counter+1)*100)/$scope.toFetch.length
               console.log('All done, ', counter)
 
               // create network in jsnx
               // console.log('calculating network with jnsx')
               var subG = new jsnx.Graph();
               newNodesRaw.forEach(function(n){
-                subG.addNode(n.id,{'label':n.label});
+                subG.addNode(n.id,{'label':n.label,'id':n.id});
               })
               newEdgesRaw.forEach(function(l){
                 subG.addEdge(l.source,l.target,{'id':l.id});

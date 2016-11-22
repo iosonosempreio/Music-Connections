@@ -26,10 +26,10 @@
 	<div class="row">
 	  	<div class="col-xs-12">
 	  		<button type="button" class="btn btn-default" ng-disabled="conductiveNodes" ng-click="fetchRelated(artistLeft.id,artistRight.id)" Dng-if="!conductiveNodes">Go</button>
-			<button type="button" class="btn btn-default" ng-click="drawGraph(network)">.show graph</button>
+			<!-- <button type="button" class="btn btn-default" ng-click="drawGraph(network)">.show graph</button> -->
 			<button type="button" class="btn btn-default" ng-click="getShortestPath(false)">Shortest Path</button>
-			<button type="button" class="btn btn-default" ng-click="saveData('json')">.saveJson</button>
-			<button type="button" class="btn btn-default" ng-click="reset()">.reset</button>
+			<!-- <button type="button" class="btn btn-default" ng-click="saveData('json')">.saveJson</button> -->
+			<!-- <button type="button" class="btn btn-default" ng-click="reset()">.reset</button> -->
 	  	</div>
 	</div>
 	<div class="row">
@@ -46,8 +46,18 @@
 
   <div class="row">
     <div class="col-xs-12">
-      <artists-network></artists-network>
+      <!-- <artists-network></artists-network> -->
+      <artists-chain></artists-chain>
     </div>
   </div>
 
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-xs-12">
+			<button type="button" class="btn btn-default" ng-click="drawGraph(network)">.show graph</button>
+			<button type="button" class="btn btn-default" ng-click="saveData('json')">.saveJson</button>
+			<button type="button" class="btn btn-default" ng-click="reset()">.reset</button>
+		</div>
+	</div>
 </div>

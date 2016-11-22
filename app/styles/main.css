@@ -96,3 +96,12 @@ artists-network {
     pointer-events: none;
     font: 4px sans-serif;
 }
+
+artists-chain {
+  width: 100%;
+  display: block;
+}
+
+#chain {
+  border: 1px solid black;
+}
